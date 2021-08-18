@@ -58,15 +58,11 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 Bootstrap(app)
 
 # servicesDomain = "" if (os.environ.get("SERVICES_DOMAIN") is None) else "." + os.environ.get("SERVICES_DOMAIN")
-detailsHostname = "details" if (os.environ.get(
-    "DETAILS_HOSTNAME") is None) else os.environ.get("DETAILS_HOSTNAME")
-ratingsHostname = "ratings" if (os.environ.get(
-    "RATINGS_HOSTNAME") is None) else os.environ.get("RATINGS_HOSTNAME")
-reviewsHostname = "reviews" if (os.environ.get(
-    "REVIEWS_HOSTNAME") is None) else os.environ.get("REVIEWS_HOSTNAME")
+detailsHostname = "details" if (os.environ.get("DETAILS_HOSTNAME") is None) else os.environ.get("DETAILS_HOSTNAME")
+ratingsHostname = "ratings" if (os.environ.get("RATINGS_HOSTNAME") is None) else os.environ.get("RATINGS_HOSTNAME")
+reviewsHostname = "reviews" if (os.environ.get("REVIEWS_HOSTNAME") is None) else os.environ.get("REVIEWS_HOSTNAME")
 
-flood_factor = 0 if (os.environ.get("FLOOD_FACTOR") is None) else int(
-    os.environ.get("FLOOD_FACTOR"))
+flood_factor = 0 if (os.environ.get("FLOOD_FACTOR") is None) else int(os.environ.get("FLOOD_FACTOR"))
 
 details = {
     # "name": "http://{0}{1}:9080".format(detailsHostname, servicesDomain),
@@ -190,8 +186,7 @@ def getForwardHeaders(request):
     if 'user' in session:
         headers['end-user'] = session['user']
 
-    incoming_headers = ['x-request-id', 'x-datadog-trace-id',
-                        'x-datadog-parent-id', 'x-datadog-sampled']
+    incoming_headers = ['x-request-id', 'x-datadog-trace-id', 'x-datadog-parent-id', 'x-datadog-sampled']
 
     # Add user-agent to headers manually
     if 'user-agent' in request.headers:
@@ -237,6 +232,9 @@ def logout():
     response = app.make_response(redirect(request.referrer))
     session.pop('user', None)
     return response
+@app.route('/newfunction')
+def newfunction():
+    return 'This is new function'
 
 # a helper function for asyncio.gather, does not return a value
 
@@ -334,8 +332,7 @@ def getProduct(product_id):
 
 def getProductDetails(product_id, headers):
     try:
-        url = details['name'] + "/" + \
-            details['endpoint'] + "/" + str(product_id)
+        url = details['name'] + "/" + details['endpoint'] + "/" + str(product_id)
         res = requests.get(url, headers=headers, timeout=3.0)
     except BaseException:
         res = None
@@ -351,8 +348,7 @@ def getProductReviews(product_id, headers):
     # TODO: Figure out how to achieve the same effect using Envoy retries/timeouts
     for _ in range(2):
         try:
-            url = reviews['name'] + "/" + \
-                reviews['endpoint'] + "/" + str(product_id)
+            url = reviews['name'] + "/" + reviews['endpoint'] + "/" + str(product_id)
             res = requests.get(url, headers=headers, timeout=3.0)
         except BaseException:
             res = None
@@ -364,8 +360,7 @@ def getProductReviews(product_id, headers):
 
 def getProductRatings(product_id, headers):
     try:
-        url = ratings['name'] + "/" + \
-            ratings['endpoint'] + "/" + str(product_id)
+        url = ratings['name'] + "/" + ratings['endpoint'] + "/" + str(product_id)
         res = requests.get(url, headers=headers, timeout=3.0)
     except BaseException:
         res = None
